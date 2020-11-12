@@ -1,0 +1,6 @@
+val textFile = sc.textFile("hdfs://localhost:9000/TravelData.txt")
+val split = textFile.map(lines=>lines.split('\t')).map(x=>(x(2),1)).reduceByKey(_+_).map(item => item.swap).sortByKey(false).take(20)
+
+val textFile = sc.textFile("hdfs://localhost:9000/TravelData.txt")
+val fil = textFile.map(x=>x.split('\t')).filter(x=>{if((x(3).matches(("1")))) true else false })
+val cnt = fil.map(x=>(x(2),1)).reduceByKey(_+_).map(item => item.swap).sortByKey(false).take(20)

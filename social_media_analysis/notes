@@ -1,0 +1,13 @@
+my_lines = sc.textFile("hdfs://localhost:9000/user/luoxiao/social_friends.csv")
+
+parts = my_lines.map(lambda x : x.split(','))
+pair = parts.map(lambda x : (x[2], int(x[3])))
+cnt = parts.map(lambda x : (x[2], 1))
+
+from operator import add
+sum = pair.reduceByKey(add)
+qty = cnt.reduceByKey(add)
+
+joint = sum.join(qty)
+result = joint.mapValues(lambda x:x[0] / x[1])
+

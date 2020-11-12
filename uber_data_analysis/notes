@@ -1,0 +1,8 @@
+val textFile = sc.textFile("hdfs://localhost:9000/TravelData.txt")
+val header = textFile.first()
+val without_header = textFile.filter(line => line != header)
+
+val format = new java.text.SimpleDateFormat("MM/dd/yyyy")
+
+val split = without_header.map(line => line.split(",")).map { x => (x(0),format.parse(x(1)),x(3)) }
+val pair = split.map(x => (x._1+" "+days(x._2.getDay),x._3.toInt)).reduceByKey(_+_).map(item => item.swap).sortByKey(false).collect.foreach(println)

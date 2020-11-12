@@ -1,0 +1,14 @@
+val emergency_file = sc.textFile("hdfs://localhost:9000/user/luoxiao/911.csv")
+val header = emergency_file.first()
+val emergency_file = sc.textFile("hdfs://localhost:9000/user/luoxiao/911.csv").filter(line => line != header)
+
+val zip_code_file = sc.textFile("hdfs://localhost:9000/user/luoxiao/zipcode.csv")
+val header = zip_code_file.first()
+val zip_code_file = sc.textFile("hdfs://localhost:9000/user/luoxiao/zipcode.csv").filter(line => line != header)
+
+val pair = emergency_file.map(lines=>lines.split(',')).map(x=>(x(3),x(4).split(':')(0)))
+val city = zip_code_file.map(lines => lines.split(",")).map(x=>(x(0).replace("\"", ""), x(1).replace("\"","")))
+var ret2 = pair.join(city)
+val ret3 = ret2.map(x=>(x._2._1 + "_" + x._2._2, 1))
+val fin = ret3.reduceByKey(_+_).map(item=>item.swap).sortByKey(false)
+
